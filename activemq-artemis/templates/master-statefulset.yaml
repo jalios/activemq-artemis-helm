@@ -50,7 +50,6 @@ spec:
       - name: configure-cluster
         image: {{ template "artemis.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
-        imagePullSecrets: {{ toYaml .Values.image.pullSecrets }}
         command: ["/bin/sh", "/opt/configure-master/configure-cluster.sh"]
         volumeMounts:
           - name: config-override
@@ -105,6 +104,7 @@ spec:
           mountPath: /opt/configure-common
         - name: configure-master
           mountPath: /opt/configure-master
+      imagePullSecrets: {{ toYaml .Values.image.pullSecrets }}
       volumes:
       - name: config-override
         emptyDir: {}
