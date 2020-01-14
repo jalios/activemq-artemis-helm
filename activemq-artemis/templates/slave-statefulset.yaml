@@ -26,8 +26,6 @@ spec:
         release: {{ .Release.Name | quote }}
         component: slave
     spec:
-      strategy:
-        type: Recreate
       initContainers:
       - name: configure-cluster
         image: {{ template "artemis.image" . }}
