@@ -47,6 +47,29 @@ spec:
                   component: slave
         {{- end }}
       initContainers:
+      - name: sidecar
+        image: kiwigrid/k8s-sidecar:latest
+        volumeMounts:
+        - name: kubernetes-config-override
+          mountPath: /kubernetes-config-override/
+        env:
+        - name: LABEL
+          value: {{ include "artemis.fullname" . }}-{{ .Release.Namespace }}-config
+        - name: FOLDER
+          value: /kubernetes-config-override/
+        - name: RESOURCE
+          value: both
+        - name: METHOD
+          value: LIST
+      - name: kubernetes-config-override-copy
+        image: "busybox"
+        imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
+        command: ["sh", "-c", "cd /kubernetes-config-override/; find . -exec cp -fv {} /var/lib/artemis/etc-override/ \\;"]
+        volumeMounts:
+          - name: config-override
+            mountPath: /var/lib/artemis/etc-override
+          - name: kubernetes-config-override
+            mountPath: /kubernetes-config-override/
       - name: configure-cluster
         image: {{ template "artemis.image" . }}
         imagePullPolicy: {{ .Values.image.pullPolicy | quote }}
@@ -107,6 +130,8 @@ spec:
       imagePullSecrets: 
         {{ toYaml .Values.image.pullSecrets | indent 8 }}
       volumes:
+      - name: kubernetes-config-override
+        emptyDir: {}
       - name: config-override
         emptyDir: {}
       - name: configure-common
