@@ -104,7 +104,8 @@ spec:
           mountPath: /opt/configure-common
         - name: configure-master
           mountPath: /opt/configure-master
-      imagePullSecrets: {{ toYaml .Values.image.pullSecrets }}
+      imagePullSecrets: 
+        {{ toYaml .Values.image.pullSecrets | indent 8 }}
       volumes:
       - name: config-override
         emptyDir: {}

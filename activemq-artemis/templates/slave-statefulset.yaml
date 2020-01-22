@@ -84,7 +84,8 @@ spec:
           mountPath: /opt/configure-common
         - name: configure-slave
           mountPath: /opt/configure-slave
-      imagePullSecrets: {{ toYaml .Values.image.pullSecrets }}
+      imagePullSecrets: 
+        {{ toYaml .Values.image.pullSecrets | indent 8 }}
       volumes:
       - name: config-override
         emptyDir: {}
